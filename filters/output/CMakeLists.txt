@@ -1,12 +1,10 @@
 PROJECT("Output Filter")
 
 INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/ui)
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/stcore_autogen/include)
 
 FILE(GLOB ui_files "ui/*.ui")
-QT4_WRAP_UI(ui_sources ${ui_files})
-SET_SOURCE_FILES_PROPERTIES(${ui_sources} PROPERTIES GENERATED TRUE)
-SOURCE_GROUP("UI Files" FILES ${ui_files})
-SOURCE_GROUP("Generated" FILES ${ui_sources})
 
 SET(
 	sources
@@ -51,10 +49,7 @@ SET(
 	ChangeDewarpingDialog.cpp ChangeDewarpingDialog.h
 	DepthPerception.cpp DepthPerception.h
 )
-SOURCE_GROUP("Sources" FILES ${sources})
-QT4_AUTOMOC(${sources})
 
-ADD_LIBRARY(output STATIC ${sources} ${ui_sources})
-ADD_DEPENDENCIES(output toplevel_ui_sources)
-
-TRANSLATION_SOURCES(scantailor ${sources} ${ui_files})
+SET(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui ${CMAKE_SOURCE_DIR}/ui)
+ADD_LIBRARY(output STATIC ${sources} ${ui_files})
+TARGET_LINK_LIBRARIES(output PUBLIC Qt6::Widgets Qt6::Xml)

@@ -35,6 +35,7 @@
 #include <QPointF>
 #include <QSizeF>
 #include <QRectF>
+#include <QEnterEvent>
 #include <Qt>
 
 class QPainter;
@@ -249,7 +250,7 @@ protected:
 
 	virtual void resizeEvent(QResizeEvent* event);
 
-	virtual void enterEvent(QEvent* event);
+	virtual void enterEvent(QEnterEvent* event);
 	
 	/**
 	 * Returns the maximum viewport size (as if scrollbars are hidden)

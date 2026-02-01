@@ -17,7 +17,6 @@
 */
 
 #include "MainWindow.h"
-#include "MainWindow.h.moc"
 #include "NewOpenProjectPanel.h"
 #include "RecentProjects.h"
 #include "WorkerThread.h"
@@ -1742,7 +1741,7 @@ MainWindow::closeProjectInteractive()
 	QFileInfo const project_file(m_projectFile);
 	QFileInfo const backup_file(
 		project_file.absoluteDir(),
-		QString::fromAscii("Backup.")+project_file.fileName()
+		QString("Backup.")+project_file.fileName()
 	);
 	QString const backup_file_path(backup_file.absoluteFilePath());
 	
@@ -1842,7 +1841,7 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
 		}
 	protected:
 		virtual bool filterAcceptsRow(int source_row, QModelIndex const& source_parent) const {
-			QModelIndex const idx(source_parent.child(source_row, 0));
+			QModelIndex const idx(sourceModel()->index(source_row, 0, source_parent));
 			QVariant const data(idx.data(QFileSystemModel::FilePathRole));
 			if (data.isNull()) {
 				return true;

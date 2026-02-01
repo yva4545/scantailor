@@ -48,7 +48,15 @@ Proximity::pointAndLineSegment(
 
 	// Calculate intersection.
 	QPointF intersection;
-	segment.intersect(perpendicular, &intersection);
+	QLineF::IntersectType intersect_type = segment.intersects(perpendicular, &intersection);
+	if (intersect_type == QLineF::NoIntersection) {
+		// This case should not happen given how 'perpendicular' is constructed
+		// unless 'segment' is a zero-length line.
+		if (point_on_segment) {
+			*point_on_segment = segment.p1();
+		}
+		return Proximity(pt, segment.p1());
+	}
 
 	double const dx1 = segment.p1().x() - intersection.x();
 	double const dy1 = segment.p1().y() - intersection.y();

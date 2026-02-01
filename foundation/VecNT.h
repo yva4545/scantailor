@@ -411,4 +411,20 @@ VecNT<N, T> operator*(T scalar, VecNT<N, T> const& vec)
 	return res;
 }
 
+template<size_t N, typename T>
+VecNT<N, T> operator+(QPointF const& lhs, VecNT<N, T> const& rhs)
+{
+	VecNT<N, T> res(lhs);
+	res += rhs;
+	return res;
+}
+
+template<size_t N, typename T>
+VecNT<N, T> operator/(VecNT<N, T> const& vec, T scalar)
+{
+	VecNT<N, T> res(vec);
+	res /= scalar;
+	return res;
+}
+
 #endif

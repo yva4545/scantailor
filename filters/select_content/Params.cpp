@@ -19,8 +19,8 @@
 #include "Params.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
-#include <QDomDocument>
-#include <QDomElement>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
 
 namespace select_content
 {

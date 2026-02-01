@@ -1,8 +1,4 @@
-IF(WIN32)
-	CMAKE_MINIMUM_REQUIRED(VERSION 2.8.4)
-ELSE()
-	CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
-ENDIF()
+CMAKE_MINIMUM_REQUIRED(VERSION 3.16)
 
 IF(COMMAND cmake_policy)
 	# Suppress warnings.
@@ -18,7 +14,11 @@ SET(
 	"${CMAKE_SOURCE_DIR}/cmake/default_cxxflags.cmake"
 )
 
-PROJECT("Scan Tailor")
+PROJECT("ScanTailor")
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 # This forces Visual Studio 2008 SP1 to actually link to the versions of the
 # libraries it ships with!  It's harmless on other platforms.
@@ -85,6 +85,8 @@ IF(CMAKE_COMPILER_IS_GNUCC)
 	ST_SET_DEFAULT_GCC_FLAGS()
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
 
+find_package(Qt6 REQUIRED COMPONENTS Widgets Xml OpenGL LinguistTools)
+
 GET_FILENAME_COMPONENT(source_outer_dir "${PROJECT_SOURCE_DIR}/../../../.." ABSOLUTE)
 GET_FILENAME_COMPONENT(build_outer_dir "${PROJECT_BINARY_DIR}/.." ABSOLUTE)
 
@@ -102,37 +104,10 @@ IF(WIN32)
 		)
 	ENDIF()
 	SET(STAGING_LIBS_DIR "${DEPS_BUILD_DIR}/staging/libs")
-	
-	IF (NOT EXISTS "${QT_QMAKE_EXECUTABLE}")
-		FILE(GLOB qt_dirs1 "${build_outer_dir}/qt-win-*-4.[0-9]*")
-		FILE(GLOB qt_dirs2 "${build_outer_dir}/qt-everywhere-*-4.[0-9]*")
-		FILE(GLOB qt_dirs3 "${source_outer_dir}/qt-win-*-4.[0-9]*")
-		FILE(GLOB qt_dirs4 "${source_outer_dir}/qt-everywhere-*-4.[0-9]*")
-		FILE(GLOB qt_dirs5 "C:/Qt/4.*.*")
-		FILE(GLOB qt_dirs6 "C:/Qt/20*/qt")
-		FIND_PROGRAM(
-			QT_QMAKE_EXECUTABLE qmake
-			PATHS dummy_dir ${qt_dirs1} ${qt_dirs2} ${qt_dirs3}
-			${qt_dirs4} ${qt_dirs5} ${qt_dirs6}
-			PATH_SUFFIXES bin
-		)
-	ENDIF()
 ENDIF()
 
-INCLUDE(FindQt4)
-IF(NOT QT4_FOUND)
-	MESSAGE(
-		FATAL_ERROR "Qt4 could not be found. "
-		"If it's installed in a non-standard location, specify the path to qmake in QT_QMAKE_EXECUTABLE. "
-		"You can do it in interactive mode (ccmake instead of cmake) or using -DVAR=VAL syntax."
-	)
-ENDIF(NOT QT4_FOUND)
-GET_FILENAME_COMPONENT(QT_BIN_DIR "${QT_QMAKE_EXECUTABLE}" PATH)
-
-
-INCLUDE(FindOpenGL)
 SET(use_opengl OFF)
-IF(OPENGL_FOUND AND QT_QTOPENGL_FOUND)
+IF(Qt6_OpenGL_FOUND)
 	# Disabled for now due to various problems associated with it.
 	# SET(use_opengl ON)
 ENDIF()
@@ -148,7 +123,7 @@ FILE(GLOB png_dirs2 "${source_outer_dir}/libpng-[0-9]*.[0-9]*.[0-9]*")
 FILE(GLOB png_dirs3 "${build_outer_dir}/lpng[0-9]*")
 FILE(GLOB png_dirs4 "${source_outer_dir}/lpng[0-9]*")
 FILE(GLOB tiff_dirs1 "${build_outer_dir}/tiff-[0-9]*.[0-9]*.[0-9]*")
-FILE(GLOB tiff_dirs2 "${source_outer_dir}/tiff-[0-9]*.[0-9]*.[0-9]*")
+FILE(GLOB tiff_dirs2 "${source_outer_dir}/tiff-[0--9]*.[0-9]*.[0-9]*")
 FILE(GLOB boost_dirs1 "${build_outer_dir}/boost_1_[0-9]*_[0-9]*")
 FILE(GLOB boost_dirs2 "${source_outer_dir}/boost_1_[0-9]*_[0-9]*")
 
@@ -347,29 +322,11 @@ ELSE(NOT HAVE_STDINT_H)
 	FILE(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/stdint.h")
 ENDIF(NOT HAVE_STDINT_H)
 
-ADD_DEFINITIONS(
-	${QT_DEFINITIONS} -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION
-)
+ADD_DEFINITIONS(-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
 
-INCLUDE_DIRECTORIES(${QT_INCLUDES})
-LINK_DIRECTORIES(${QT_LIBRARY_DIR})
-
-#SET(QJPEG_LIBRARIES "")
 IF(WIN32)
-#	FIND_LIBRARY(QJPEG_RELEASE qjpeg PATHS "${QT_PLUGINS_DIR}/imageformats")
-#	FIND_LIBRARY(QJPEG_DEBUG qjpegd PATHS "${QT_PLUGINS_DIR}/imageformats")
-#	MARK_AS_ADVANCED(FORCE QJPEG_RELEASE QJPEG_DEBUG)
-#	IF(QJPEG_RELEASE AND NOT QJPEG_DEBUG)
-#		SET(QJPEG_DEBUG "${QJPEG_RELEASE}")
-#	ELSEIF(QJPEG_DEBUG AND NOT QJPEG_RELEASE)
-#		SET(QJPEG_RELEASE "${QJPEG_DEBUG}")
-#	ELSEIF(NOT QJPEG_DEBUG AND NOT QJPEG_RELEASE)
-#		MESSAGE(FATAL_ERROR "qjpeg plugin wasn't found!")
-#	ENDIF()
-#	SET(QJPEG_LIBRARIES "debug;${QJPEG_DEBUG};optimized;${QJPEG_RELEASE}")
-#
 	LIST(
-		APPEND EXTRA_LIBS "${QT_QTMAIN_LIBRARY}"
+		APPEND EXTRA_LIBS
 		winmm imm32 ws2_32 ole32 oleaut32 uuid gdi32 comdlg32 winspool
 	)
 ENDIF()
@@ -379,7 +336,7 @@ ENDIF()
 LIST(APPEND EXTRA_LIBS ${TIFF_LIBRARY} ${PNG_LIBRARY} ${ZLIB_LIBRARY} ${JPEG_LIBRARY})
 
 IF(ENABLE_OPENGL)
-	LIST(APPEND EXTRA_LIBS ${QT_QTOPENGL_LIBRARY} ${OPENGL_LIBRARIES})
+	LIST(APPEND EXTRA_LIBS Qt6::OpenGL)
 ENDIF()
 
 # Crash reporter, only Windows + MSVC supported for now.
@@ -415,14 +372,8 @@ FOREACH(ui_file ${common_ui_files})
 	LIST(REMOVE_ITEM gui_only_ui_files "${ui_file}")
 ENDFOREACH()
 
-SOURCE_GROUP("UI Files" FILES ${common_ui_files} ${gui_only_ui_files})
-QT4_WRAP_UI(common_ui_sources ${common_ui_files})
-QT4_WRAP_UI(gui_only_ui_sources ${gui_only_ui_files})
-SET_SOURCE_FILES_PROPERTIES(${common_ui_sources} ${gui_only_ui_files} PROPERTIES GENERATED TRUE)
-ADD_SUBDIRECTORY(ui)
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}") # for ui files
 
-ADD_CUSTOM_TARGET(toplevel_ui_sources DEPENDS ${common_ui_sources} ${gui_only_ui_sources})
+INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}") # for ui files
 
 ADD_SUBDIRECTORY(filters/fix_orientation)
 ADD_SUBDIRECTORY(filters/page_split)
@@ -430,14 +381,6 @@ ADD_SUBDIRECTORY(filters/deskew)
 ADD_SUBDIRECTORY(filters/select_content)
 ADD_SUBDIRECTORY(filters/page_layout)
 ADD_SUBDIRECTORY(filters/output)
-
-SET(resource_sources)
-QT4_ADD_RESOURCES(resource_sources resources/resources.qrc)
-SOURCE_GROUP("Generated" FILES ${common_ui_sources} ${gui_only_ui_sources} ${resource_sources})
-SOURCE_GROUP("Resources" FILES resources/resources.qrc resources/icons/COPYING)
-IF(WIN32)
-	SOURCE_GROUP("Resources" FILES resources/win32/resources.rc)
-ENDIF()
 
 SET(
 	common_sources
@@ -500,6 +443,7 @@ SET(
 	TaskStatus.h FilterUiInterface.h
 	ProjectReader.cpp ProjectReader.h
 	ProjectWriter.cpp ProjectWriter.h
+
 	XmlMarshaller.cpp XmlMarshaller.h
 	XmlUnmarshaller.cpp XmlUnmarshaller.h
 	AtomicFileOverwriter.cpp AtomicFileOverwriter.h
@@ -561,11 +505,6 @@ SET(
 	main-cli.cpp
 )
 
-SOURCE_GROUP("Sources" FILES ${common_sources} ${gui_only_sources} ${cli_only_sources})
-QT4_AUTOMOC(${common_sources} ${gui_only_sources} ${cli_only_sources})
-
-SOURCE_GROUP("Special Headers" FILES version.h config.h.in)
-
 IF(CMAKE_COMPILER_IS_GNUCXX)
 	# There seems to be a bug in either gcc or boost that makes page sorting either crash
 	# or go into infinite loop.  It's reproducible on a very simple test case on at least
@@ -600,29 +539,36 @@ IF(WIN32)
 	ENDIF(MINGW)
 ENDIF(WIN32)
 
-ADD_LIBRARY(stcore STATIC ${common_sources} ${common_ui_sources})
-
-ADD_EXECUTABLE(
-	scantailor WIN32 ${gui_only_sources} ${common_ui_sources} ${gui_only_ui_sources}
-	${resource_sources} ${win32_resource_file} resources/icons/COPYING
+SET(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui)
+ADD_LIBRARY(stcore STATIC ${common_sources} ${common_ui_files})
+TARGET_LINK_LIBRARIES(stcore PUBLIC Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Xml)
+TARGET_INCLUDE_DIRECTORIES(stcore PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
+    $<BUILD_INTERFACE:${Qt6_INCLUDE_DIRS}>
 )
 
-ADD_EXECUTABLE(scantailor-cli ${cli_only_sources} ${common_ui_sources})
 
-# Note that order of static libraries matters with gcc.  Specifically,
-# QJPEG_LIBRARIES needs to go before Qt libraries and EXTRA_LIBS needs
-# to go after both of them.
+INCLUDE_DIRECTORIES("${CMAKE_BINARY_DIR}/stcore_autogen/include")
+ADD_EXECUTABLE(
+	scantailor WIN32 ${gui_only_sources} ${common_ui_files} ${gui_only_ui_files}
+	resources/resources.qrc ${win32_resource_file} resources/icons/COPYING
+)
+
+ADD_EXECUTABLE(scantailor-cli ${cli_only_sources} ${common_ui_files})
+
+# Note that order of static libraries matters with gcc.
 TARGET_LINK_LIBRARIES(
 	scantailor
 	fix_orientation page_split deskew select_content page_layout output stcore
-	dewarping zones interaction imageproc math foundation ${QJPEG_LIBRARIES}
-	${QT_QTGUI_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTCORE_LIBRARY} ${EXTRA_LIBS}
+	dewarping zones interaction imageproc math foundation
+	Qt6::Widgets Qt6::Xml ${EXTRA_LIBS}
 )
 TARGET_LINK_LIBRARIES(
 	scantailor-cli
 	fix_orientation page_split deskew select_content page_layout output
-	stcore dewarping zones interaction imageproc math foundation ${QJPEG_LIBRARIES}
-	${QT_QTGUI_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTCORE_LIBRARY} ${EXTRA_LIBS}
+	stcore dewarping zones interaction imageproc math foundation
+	Qt6::Core ${EXTRA_LIBS}
 )
 INSTALL(TARGETS scantailor scantailor-cli RUNTIME DESTINATION bin)
 
@@ -654,36 +600,10 @@ IF(ENABLE_CRASH_REPORTER)
 ENDIF(ENABLE_CRASH_REPORTER)
 
 # Translations
-TRANSLATION_SOURCES(
-	scantailor
-	${common_sources} ${gui_only_sources} ${cli_only_sources}
-	${common_ui_files} ${gui_only_ui_files}
-)
 FILE(GLOB TRANSLATION_FILES translations/scantailor_*.ts)
-FILE(GLOB CR_TRANSLATION_FILES translations/crashreporter_*.ts)
-
-FINALIZE_TRANSLATION_SET(scantailor ${TRANSLATION_FILES})
-FINALIZE_TRANSLATION_SET(crashreporter ${CR_TRANSLATION_FILES})
-UPDATE_TRANSLATIONS_TARGET(update_translations scantailor crashreporter)
-
-SET(ts_files ${TRANSLATION_FILES})
-IF(ENABLE_CRASH_REPORTER)
-	LIST(APPEND ts_files ${CR_TRANSLATION_FILES})
-ENDIF(ENABLE_CRASH_REPORTER)
-
-# Don't build *.qm files from *untranslated.ts
-SET(FILTERED_TRANSLATION_FILES)
-FOREACH(ts_file ${ts_files})
-	IF ("${ts_file}" MATCHES ".*untranslated.ts")
-		# Just skip it.
-	ELSE("${ts_file}" MATCHES ".*untranslated.ts")
-		LIST(APPEND FILTERED_TRANSLATION_FILES "${ts_file}")
-	ENDIF("${ts_file}" MATCHES ".*untranslated.ts")
-ENDFOREACH(ts_file)
-QT4_ADD_TRANSLATION(QM_FILES ${FILTERED_TRANSLATION_FILES})
-ADD_CUSTOM_TARGET(compile_translations ALL DEPENDS ${QM_FILES})
-
-INSTALL(FILES ${QM_FILES} DESTINATION "${TRANSLATIONS_DIR_REL}/")
+qt_add_translations(scantailor
+    TS_FILES ${TRANSLATION_FILES}
+)
 
 # Tests
 ADD_TEST(ImageProcTests imageproc/tests/imageproc_tests --log_level=message)
@@ -707,81 +627,6 @@ SET(
 INCLUDE(CPack)
 
 IF(WIN32)
-	# Copy some DLLs to the staging dir.
-	
-	IF(MINGW)
-		CHECK_CXX_ACCEPTS_FLAG("-m64" MINGW64)
-		IF(NOT MINGW64)
-			FIND_FILE(
-				MINGWM10_DLL mingwm10.dll
-				PATHS c:/MinGW/bin ENV PATH
-				DOC "Full path to mingwm10.dll"
-			)
-			IF(NOT MINGWM10_DLL)
-				MESSAGE(
-					FATAL_ERROR
-					"Could not find mingwm10.dll\n"
-					"It shou 'bin' subdirectory of your MinGW installation."
-				)
-			ENDIF(NOT MINGWM10_DLL)
-			COPY_TO_BUILD_DIR("${MINGWM10_DLL}")
-
-			FIND_FILE(
-				GCC_DW2_DLL libgcc_s_dw2-1.dll
-				PATHS c:/MinGW/bin ENV PATH
-				DOC "Full path to libgcc_s_dw2-1.dll"
-			)
-			IF(NOT GCC_DW2_DLL)
-				SET(GCC_DW2_DLL "") # For NSIS
-				MESSAGE(
-					"Could not find libgcc_s_dw2-1.dll\n"
-					"That's fine if your MinGW is old and just doesn't have it."
-				)
-			ELSE()
-				COPY_TO_BUILD_DIR("${GCC_DW2_DLL}")
-			ENDIF()
-		ENDIF(NOT MINGW64)
-	ENDIF(MINGW)
-	
-	SET(
-		libs_copy_debug
-		"${QT_QTCORE_LIBRARY_DEBUG}"
-		"${QT_QTGUI_LIBRARY_DEBUG}"
-		"${QT_QTXML_LIBRARY_DEBUG}"
-		"${QT_QTNETWORK_LIBRARY_DEBUG}"
-	)
-	LIB_TO_DLL(libs_copy_debug ${libs_copy_debug})
-	COPY_TO_BUILD_DIR(${libs_copy_debug} CONFIGURATIONS Debug)
-	
-	SET(
-		libs_copy_nondebug
-		"${QT_QTCORE_LIBRARY_RELEASE}"
-		"${QT_QTGUI_LIBRARY_RELEASE}"
-		"${QT_QTXML_LIBRARY_RELEASE}"
-		"${QT_QTNETWORK_LIBRARY_RELEASE}"
-	)
-	LIB_TO_DLL(libs_copy_nondebug ${libs_copy_nondebug})
-	COPY_TO_BUILD_DIR(${libs_copy_nondebug} CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-	
-	# Qt's imageformat plugins. Note that png is built-in and for tiff we have our own code.
-	COPY_TO_BUILD_DIR("${QT_QJPEG_PLUGIN_RELEASE}" SUBDIR imageformats CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-	COPY_TO_BUILD_DIR("${QT_QJPEG_PLUGIN_DEBUG}" SUBDIR imageformats CONFIGURATIONS Debug)
-	
-	IF(MINGW)
-		SET(zlib_dll "${QT_BIN_DIR}/libz.dll")
-	ELSE()
-		SET(zlib_dll "${QT_BIN_DIR}/zdll.dll")
-	ENDIF()
-	SET(
-		libs_copy_all_confs
-		"${QT_BIN_DIR}/libpng.dll" "${QT_BIN_DIR}/libjpeg.dll"
-		"${QT_BIN_DIR}/libtiff.dll" "${zlib_dll}"
-	)
-	COPY_TO_BUILD_DIR(${libs_copy_all_confs})
-	
-	# Generate the target that will actually do the copying.
-	GENERATE_COPY_TO_BUILD_DIR_TARGET(copy_to_build_dir)
-	
 	# Installer for Windows.  Must go the last.
 	ADD_SUBDIRECTORY(packaging/windows)
 ENDIF(WIN32)

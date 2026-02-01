@@ -24,10 +24,12 @@
 #include <boost/foreach.hpp>
 #endif
 #include <QByteArray>
+#include <QIODevice>
 #include <QDataStream>
 #include <QDomDocument>
 #include <QDomElement>
 #include <QString>
+#include <QIODevice>
 #include <algorithm>
 
 namespace dewarping

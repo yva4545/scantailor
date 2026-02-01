@@ -20,8 +20,8 @@
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 #include "imageproc/PolygonUtils.h"
-#include <QDomDocument>
-#include <QDomElement>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
 
 using namespace imageproc;
 

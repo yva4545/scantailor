@@ -15,7 +15,7 @@ SET(
 	libs
 	imageproc math ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
 	${Boost_PRG_EXECUTION_MONITOR_LIBRARY}
-	${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY} ${EXTRA_LIBS}
+	Qt6::Gui Qt6::Core ${EXTRA_LIBS}
 )
 
 ADD_EXECUTABLE(tests ${sources})

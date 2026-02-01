@@ -25,7 +25,7 @@ class QDomDocument;
 class QDomElement;
 class QString;
 class QRectF;
-class QTransform;
+#include <QTransform>
 
 namespace dewarping
 {

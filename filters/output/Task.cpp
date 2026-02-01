@@ -488,13 +488,15 @@ Task::UiUpdater::updateUI(FilterUiInterface* ui)
 	);
 	QPixmap const downscaled_output_pixmap(image_view->downscaledPixmap());
 
+	QList<QPointF> combined_area_list = m_xform.resultingPreCropArea() + m_xform.resultingPostCropArea();
+	std::vector<QPointF> combined_area_vector(combined_area_list.size());
+	std::copy(combined_area_list.begin(), combined_area_list.end(), combined_area_vector.begin());
 	std::auto_ptr<ImageViewBase> dewarping_view(
 		new DewarpingView(
 			m_origImage, m_downscaledOrigImage, m_xform.transform(),
 			PolygonUtils::convexHull(
-				(m_xform.resultingPreCropArea() + m_xform.resultingPostCropArea()).toStdVector()
-			),
-			m_virtContentRect, m_pageId, m_params.dewarpingMode(),
+				combined_area_vector
+			),			m_virtContentRect, m_pageId, m_params.dewarpingMode(),
 			m_params.distortionModel(), opt_widget->depthPerception()
 		)
 	);

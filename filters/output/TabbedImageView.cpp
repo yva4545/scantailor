@@ -16,7 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "TabbedImageView.h.moc"
+#include "TabbedImageView.h"
+#include <QTabWidget>
+#include <QWidget>
+#include <QString>
+#include "ImageViewTab.h"
+#include <map>
 
 namespace output
 {

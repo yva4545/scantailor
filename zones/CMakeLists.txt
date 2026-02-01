@@ -20,9 +20,5 @@ SET(
 	ZoneContextMenuItem.h
 )
 
-SOURCE_GROUP(Sources FILES ${sources})
-QT4_AUTOMOC(${sources})
-
 ADD_LIBRARY(zones STATIC ${sources})
-
-TRANSLATION_SOURCES(scantailor ${sources})
+TARGET_LINK_LIBRARIES(zones PUBLIC Qt6::Widgets Qt6::Xml)

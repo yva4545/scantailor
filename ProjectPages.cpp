@@ -17,7 +17,6 @@
 */
 
 #include "ProjectPages.h"
-#include "ProjectPages.h.moc"
 #include "ImageFileInfo.h"
 #include "ImageMetadata.h"
 #include "ImageInfo.h"
@@ -361,7 +360,7 @@ struct File
 	
 	File(QString const& fname) : fileName(fname) {}
 	
-	operator ImageFileInfo() const { return ImageFileInfo(fileName, metadata); }
+	operator ImageFileInfo() const { return ImageFileInfo(QFileInfo(fileName), metadata); }
 };
 
 } // anonymous namespace

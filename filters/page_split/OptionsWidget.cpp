@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QButtonGroup>
 #include "OptionsWidget.h"
-#include "OptionsWidget.h.moc"
 #include "Filter.h"
 #include "SplitModeDialog.h"
 #include "Settings.h"

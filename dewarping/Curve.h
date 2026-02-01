@@ -26,6 +26,7 @@
 class QDomDocument;
 class QDomElement;
 class QString;
+class QIODevice;
 
 namespace dewarping
 {

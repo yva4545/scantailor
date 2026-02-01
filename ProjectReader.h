@@ -26,7 +26,7 @@
 #include "SelectedPage.h"
 #include "IntrusivePtr.h"
 #include <QString>
-#include <QDomDocument>
+#include <QtXml/QDomDocument>
 #include <Qt>
 #include <vector>
 #include <map>

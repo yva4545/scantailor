@@ -34,8 +34,8 @@
 #endif
 #include <QString>
 #include <QObject>
-#include <QDomDocument>
-#include <QDomElement>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
 #include <assert.h>
 #include "CommandLine.h"
 

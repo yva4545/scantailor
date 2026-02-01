@@ -17,7 +17,6 @@
 */
 
 #include "ProjectFilesDialog.h"
-#include "ProjectFilesDialog.h.moc"
 #include "NonCopyable.h"
 #include "ImageMetadata.h"
 #include "ImageMetadataLoader.h"
@@ -267,7 +266,7 @@ void pushFileInfo(std::vector<ImageFileInfo>& files, Item const& item)
 
 bool imageFileInfoLess(ImageFileInfo const& lhs, ImageFileInfo const& rhs)
 {
-	return SmartFilenameOrdering()(lhs.fileInfo(), rhs.fileInfo());
+	return SmartFilenameOrdering()(lhs.fileInfo().filePath(), rhs.fileInfo().filePath());
 }
 
 } // anonymous namespace
@@ -852,5 +851,5 @@ ProjectFilesDialog::ItemVisualOrdering::operator()(
 		return lhs_failed;
 	}
 	
-	return SmartFilenameOrdering()(lhs.fileInfo(), rhs.fileInfo());
+	return SmartFilenameOrdering()(lhs.fileInfo().filePath(), rhs.fileInfo().filePath());
 }

@@ -17,3 +17,13 @@ SET(
 SOURCE_GROUP("Sources" FILES ${sources})
 
 ADD_LIBRARY(dewarping STATIC ${sources})
+TARGET_LINK_LIBRARIES(dewarping PUBLIC Qt6::Core Qt6::Xml Qt6::Gui)
+TARGET_INCLUDE_DIRECTORIES(dewarping PUBLIC
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_BINARY_DIR}
+    ${Qt6_PRIVATE_INCLUDE_DIRS}
+    ${Qt6Widgets_INCLUDE_DIRS}
+    ${Qt6Core_INCLUDE_DIRS}
+    ${Qt6Gui_INCLUDE_DIRS}
+    ${Qt6Xml_INCLUDE_DIRS}
+)

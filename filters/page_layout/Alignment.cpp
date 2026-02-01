@@ -17,8 +17,8 @@
 */
 
 #include "Alignment.h"
-#include <QDomDocument>
-#include <QDomElement>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
 #include <QString>
 
 namespace page_layout
@@ -77,8 +77,8 @@ Alignment::toXml(QDomDocument& doc, QString const& name) const
 	}
 	
 	QDomElement el(doc.createElement(name));
-	el.setAttribute("vert", QString::fromAscii(vert));
-	el.setAttribute("hor", QString::fromAscii(hor));
+	el.setAttribute("vert", QString(vert));
+	el.setAttribute("hor", QString(hor));
 	el.setAttribute("null", m_isNull ? 1 : 0);
 	return el;
 }

@@ -41,8 +41,8 @@
 #include <QString>
 #include <QObject>
 #include <QCoreApplication>
-#include <QDomDocument>
-#include <QDomElement>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
 #include <assert.h>
 #include "CommandLine.h"
 

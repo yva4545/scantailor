@@ -31,24 +31,15 @@ BOOST_AUTO_TEST_SUITE(SmartFilenameOrderingTestSuite);
 BOOST_AUTO_TEST_CASE(test_same_file)
 {
 	SmartFilenameOrdering const less;
-	QFileInfo const somefile("/etc/somefile");
+	QString const somefile("/etc/somefile");
 	BOOST_CHECK(!less(somefile, somefile));
-}
-
-BOOST_AUTO_TEST_CASE(test_dirs_different)
-{
-	SmartFilenameOrdering const less;
-	QFileInfo const lhs("/etc/file");
-	QFileInfo const rhs("/ect/file");
-	BOOST_CHECK(less(lhs, rhs) == (lhs.absolutePath() < rhs.absolutePath()));
-	BOOST_CHECK(less(rhs, lhs) == (rhs.absolutePath() < lhs.absolutePath()));
 }
 
 BOOST_AUTO_TEST_CASE(test_simple_case)
 {
 	SmartFilenameOrdering const less;
-	QFileInfo const lhs("/etc/1.png");
-	QFileInfo const rhs("/etc/2.png");
+	QString const lhs("1.png");
+	QString const rhs("2.png");
 	BOOST_CHECK(less(lhs, rhs) == true);
 	BOOST_CHECK(less(rhs, lhs) == false);
 }
@@ -56,8 +47,8 @@ BOOST_AUTO_TEST_CASE(test_simple_case)
 BOOST_AUTO_TEST_CASE(test_avg_case)
 {
 	SmartFilenameOrdering const less;
-	QFileInfo const lhs("/etc/a_0002.png");
-	QFileInfo const rhs("/etc/a_1.png");
+	QString const lhs("a_0002.png");
+	QString const rhs("a_1.png");
 	BOOST_CHECK(less(lhs, rhs) == false);
 	BOOST_CHECK(less(rhs, lhs) == true);
 }
@@ -65,8 +56,8 @@ BOOST_AUTO_TEST_CASE(test_avg_case)
 BOOST_AUTO_TEST_CASE(test_compex_case)
 {
 	SmartFilenameOrdering const less;
-	QFileInfo const lhs("/etc/a10_10.png");
-	QFileInfo const rhs("/etc/a010_2.png");
+	QString const lhs("a10_10.png");
+	QString const rhs("a010_2.png");
 	BOOST_CHECK(less(lhs, rhs) == false);
 	BOOST_CHECK(less(rhs, lhs) == true);
 }
@@ -74,8 +65,8 @@ BOOST_AUTO_TEST_CASE(test_compex_case)
 BOOST_AUTO_TEST_CASE(test_almost_equal)
 {
 	SmartFilenameOrdering const less;
-	QFileInfo const lhs("/etc/10.png");
-	QFileInfo const rhs("/etc/010.png");
+	QString const lhs("10.png");
+	QString const rhs("010.png");
 	BOOST_CHECK(less(lhs, rhs) == false);
 	BOOST_CHECK(less(rhs, lhs) == true);
 }

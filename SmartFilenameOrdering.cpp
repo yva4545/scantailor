@@ -18,19 +18,14 @@
 
 #include "SmartFilenameOrdering.h"
 #include <QFileInfo>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QString>
 
 bool
-SmartFilenameOrdering::operator()(QFileInfo const& lhs, QFileInfo const& rhs) const
+SmartFilenameOrdering::operator()(QString const& lhs, QString const& rhs) const
 {
-	// First compare directories.
-	if (int comp = lhs.absolutePath().compare(rhs.absolutePath())) {
-		return comp < 0;
-	}
-	
-	QString const lhs_fname(lhs.fileName());
-	QString const rhs_fname(rhs.fileName());
+	QString const lhs_fname(lhs);
+	QString const rhs_fname(rhs);
 	QChar const* lhs_ptr = lhs_fname.constData();
 	QChar const* rhs_ptr = rhs_fname.constData();
 	while (!lhs_ptr->isNull() && !rhs_ptr->isNull()) {

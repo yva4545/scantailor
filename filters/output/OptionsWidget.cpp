@@ -17,7 +17,6 @@
 */
 
 #include "OptionsWidget.h"
-#include "OptionsWidget.h.moc"
 #include "ChangeDpiDialog.h"
 #include "ChangeDewarpingDialog.h"
 #include "ApplyColorsDialog.h"
@@ -44,6 +43,7 @@
 #include <QSize>
 #include <Qt>
 #include <QDebug>
+#include <QStringLiteral>
 
 namespace output
 {
@@ -582,7 +582,7 @@ OptionsWidget::updateDpiDisplay()
 {
 	if (m_outputDpi.horizontal() != m_outputDpi.vertical()) {
 		dpiLabel->setText(
-			QString::fromAscii("%1 x %2")
+			QStringLiteral("%1 x %2")
 			.arg(m_outputDpi.horizontal()).arg(m_outputDpi.vertical())
 		);
 	} else {

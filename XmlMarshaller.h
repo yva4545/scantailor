@@ -19,8 +19,8 @@
 #ifndef XMLMARSHALLER_H_
 #define XMLMARSHALLER_H_
 
-#include <QDomDocument>
-#include <QDomElement>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
 #include <QString>
 
 class QSize;

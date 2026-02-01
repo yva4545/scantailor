@@ -23,10 +23,9 @@
 #include "IntrusivePtr.h"
 #include "Property.h"
 #include <vector>
-
-class PropertyFactory;
-class QDomDocument;
-class QDomElement;
+#include <QDomDocument>
+#include <QDomElement>
+#include "PropertyFactory.h"
 class QString;
 
 class PropertySet : public RefCountable

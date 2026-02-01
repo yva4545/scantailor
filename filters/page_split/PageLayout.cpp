@@ -236,7 +236,8 @@ PageLayout::inscribedCutterLine(int idx) const
 	for (int i = 0; i < 4; ++i) {
 		QLineF const poly_segment(m_uncutOutline[i], m_uncutOutline[(i + 1) & 3]);
 		QPointF intersection;
-		if (poly_segment.intersect(raw_line, &intersection) == QLineF::NoIntersection) {
+		auto intersect_type = poly_segment.intersects(raw_line, &intersection);
+		if (intersect_type == QLineF::NoIntersection) {
 			continue;
 		}
 
@@ -436,7 +437,7 @@ PageLayout::typeToString(Type const type)
 			break;
 	}
 	
-	return QString::fromAscii(str);
+	return QString::fromLatin1(str);
 }
 
 /**
@@ -501,7 +502,8 @@ PageLayout::maybeAddIntersectionPoint(
 	QPolygonF& poly, QLineF const& line1, QLineF const& line2)
 {
 	QPointF intersection;
-	if (line1.intersect(line2, &intersection) == QLineF::NoIntersection) {
+	auto intersect_type = line1.intersects(line2, &intersection);
+	if (intersect_type == QLineF::NoIntersection) {
 		return;
 	}
 

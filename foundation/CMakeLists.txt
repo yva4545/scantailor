@@ -30,6 +30,6 @@ SET(
 	ValueConv.h
 )
 SOURCE_GROUP("Sources" FILES ${sources})
-QT4_AUTOMOC(${sources})
 
 ADD_LIBRARY(foundation STATIC ${sources})
+TARGET_LINK_LIBRARIES(foundation PUBLIC Qt6::Core Qt6::Xml)

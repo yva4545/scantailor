@@ -17,6 +17,7 @@
 */
 
 #include "PropertyFactory.h"
+#include <QDomDocument>
 #include <QDomElement>
 #include <QString>
 
