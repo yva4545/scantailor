@@ -1,8 +1,8 @@
-# Scan Tailor - [scantailor.org](http://scantailor.org/)
+# This is a fork of Scan Tailor - [scantailor.org](http://scantailor.org/)
 
 ![ScanTailor logo from scantailor.org](http://scantailor.org/assets/logo_h300-fs8.png)
 
-# This project is no longer maintained, and has not been maintained for a while. 
+This repository provides a quite straightforward port of the extremely useful scantailor project to the modern Qt6.  
 
 
 ## About ##
